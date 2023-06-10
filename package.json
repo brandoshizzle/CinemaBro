@@ -1,0 +1,25 @@
+{
+  "name": "cinemabro",
+  "version": "1.0.0",
+  "description": "Discord Movie Bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brandoshizzle/CinemaBro.git"
+  },
+  "author": "Brandon Cathcart",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/brandoshizzle/CinemaBro/issues"
+  },
+  "homepage": "https://github.com/brandoshizzle/CinemaBro#readme",
+  "dependencies": {
+    "discord.js": "^14.11.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.42.0"
+  }
+}
