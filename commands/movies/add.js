@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
-const supabase = require('../../db')
+const supabase = require('../../db');
+const logError = require('../../util/logError');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -9,53 +10,68 @@ module.exports = {
 			option
 				.setName('movie')
 				.setDescription('The movie you want to add')
-				.setRequired(true)),
+				.setRequired(true))
+		.addStringOption(option =>
+			option
+				.setName('rating')
+				.setDescription('Your rating for the movie')),
 	async execute (interaction) {
 		const movie = interaction.options.getString('movie');
-		try {
-			// Add movie
-			const { data: newMovies, error: movieError } = await supabase
-				.from('movies')
-				.upsert({ name: movie })
-				.select()
+		const rating = interaction.options.getString('rating');
+		const guildOrUser = {
+			id: interaction?.guild?.id ?? interaction.user.id,
+			name: interaction?.guild?.name ?? interaction.user.username
+		}
 
-			if (movieError) {
-				console.log(movieError)
-				return interaction.reply("Issue adding movie.")
-			}
+		// Add movie to database
+		const { data: newMovies, error: movieError } = await supabase
+			.from('movies')
+			.upsert({ name: movie }, { onConflict: 'name' })
+			.select()
 
-			const newMovie = newMovies[0]
+		if (movieError) {
+			return logError(interaction, movieError)
+		}
 
-			// Update Guild object
+		console.log(newMovies)
+
+		const newMovie = newMovies[0]
+
+		// Update Guild table with latest movie
+		if (interaction?.guild?.id) {
 			const { error: guildError } = await supabase
 				.from('guilds')
-				.upsert({ id: interaction.guild.id, name: interaction.guild.name, latest_movie: Number(newMovie.id) })
+				.upsert({ id: guildOrUser.id, name: guildOrUser.name, latest_movie: Number(newMovie.id) })
 				.select()
 
 			if (guildError) {
-				console.log(guildError)
-				return interaction.reply("Issue updating guild.")
+				return logError(interaction, guildError)
 			}
 
-			// Update Guild object
+			// Update Guild Movies table
 			const { error: guildMoviesError } = await supabase
 				.from('guild_movies')
-				.upsert({ movie_id: newMovie.id, guild_id: interaction.guild.id })
+				.upsert({ movie_id: newMovie.id, guild_id: guildOrUser.id })
 				.select()
 
 			if (guildMoviesError) {
-				console.log(guildMoviesError)
-				return interaction.reply("Issue adding movie relation.")
+				return logError(interaction, guildMoviesError)
 			}
+		}
 
-			return interaction.reply(`Movie ${newMovie.name} added.`);
-		}
-		catch (error) {
-			if (error.name === 'SequelizeUniqueConstraintError') {
-				return interaction.reply('That movie already exists.');
+		// Add rating if applicable
+		if (rating) {
+			const { error: ratingError } = await supabase
+				.from('ratings')
+				.upsert({ user_id: interaction.user.id, movie_id: movie.id, rating: rating })
+				.select()
+
+			if (ratingError) {
+				return logError(interaction, ratingError)
 			}
-			console.log(error)
-			return interaction.reply('Something went wrong with adding a tag.');
 		}
+
+
+		return interaction.reply(`Sick, I added ${newMovie.name} to ${guildOrUser.name}.`);
 	},
 };

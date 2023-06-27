@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const supabase = require('../../db');
-const getAllMovies = require('../../util/getAllMovies');
+const logError = require('../../util/logError');
+const movieAutoComplete = require('../../util/movieAutoComplete');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -15,32 +16,17 @@ module.exports = {
 		.addStringOption(option =>
 			option
 				.setName('movie')
-				.setDescription('The movie you want to add')
+				.setDescription('The movie you want to rate')
 				.setRequired(false)
 				.setAutocomplete(true)
 		),
 	async autocomplete (interaction) {
-		const focusedValue = interaction.options.getFocused();
-		const { movies } = await getAllMovies()
-		const filtered = movies.filter(movie => movie.name.toLowerCase().includes(focusedValue.toLowerCase()));
-		await interaction.respond(
-			filtered.map(movie => ({ name: movie.name, value: movie.id })),
-		);
+		await movieAutoComplete(interaction)
 	},
 	async execute (interaction) {
 		const passedMovieId = interaction.options.getString('movie');
 		const rating = interaction.options.getString('rating');
 		let movie
-
-		// Ensure user is registered
-		const { error: userError } = await supabase
-			.from('users')
-			.upsert({ id: interaction.user.id, username: interaction.user.username })
-
-		if (userError) {
-			console.log(userError)
-			return interaction.reply('Issue registering user to database. Please try again.')
-		}
 
 		if (!passedMovieId) {
 			// No movie proivded, get latest from guild
@@ -55,8 +41,7 @@ module.exports = {
 				.eq('id', interaction.guild.id)
 
 			if (error) {
-				console.log(error)
-				return interaction.reply("Issue getting the latest movie from the database.");
+				return logError(interaction, error)
 			}
 
 			if (!data || data?.length === 0) {
@@ -86,20 +71,16 @@ module.exports = {
 
 		}
 
-		console.log(movie)
-
-		const { data: ratingData, error: ratingError } = await supabase
+		const { error: ratingError } = await supabase
 			.from('ratings')
 			.upsert({ user_id: interaction.user.id, movie_id: movie.id, rating: rating })
 			.select()
 
 		if (ratingError) {
-			console.log(ratingError)
-			return interaction.reply('Issue sending rating to database. Please try again.')
+			return logError(interaction, ratingError)
 		}
 
-		console.log(ratingData)
-		return interaction.reply(`<@${interaction.user.id}> just gave ${movie.name} a medium ${rating}.`)
+		return interaction.reply(`<@${interaction.user.id}> just gave ${movie.name} a **${rating}**.`)
 
 	},
 };
