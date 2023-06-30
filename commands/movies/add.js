@@ -33,8 +33,6 @@ module.exports = {
 			return logError(interaction, movieError)
 		}
 
-		console.log(newMovies)
-
 		const newMovie = newMovies[0]
 
 		// Update Guild table with latest movie
@@ -56,6 +54,16 @@ module.exports = {
 
 			if (guildMoviesError) {
 				return logError(interaction, guildMoviesError)
+			}
+		} else {
+			// Update user table with latest_movie
+			const { error: userTableError } = await supabase
+				.from('users')
+				.upsert({ id: guildOrUser.id, latest_movie: Number(newMovie.id) })
+				.select()
+
+			if (userTableError) {
+				return logError(interaction, userTableError)
 			}
 		}
 

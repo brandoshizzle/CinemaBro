@@ -24,7 +24,7 @@ module.exports = {
 		const newBlacklist = oldBlacklist.push(user.id)
 
 		if (getBlacklistError) {
-			return logError(interaction, updateBlacklistError, false, true)
+			return logError(interaction, updateBlacklistError, { ephemeral: true })
 		}
 
 		const { error: updateBlacklistError } = await supabase
@@ -33,7 +33,7 @@ module.exports = {
 			.eq('id', interaction.guild.id)
 
 		if (updateBlacklistError) {
-			return logError(interaction, updateBlacklistError, false, true)
+			return logError(interaction, updateBlacklistError, { ephemeral: true })
 		}
 
 		return interaction.reply(`No prob bro, I added ${user.username} to ${interaction.guild.name}'s blacklist.`);

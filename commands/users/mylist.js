@@ -24,8 +24,7 @@ module.exports = {
 			.order('rating', { ascending: false })
 
 		if (error) {
-			console.log('hey error')
-			return logError(interaction, error, true, true)
+			return logError(interaction, error, { ephemeral: true, edit: true })
 		}
 		let replyArray = ['Coming in hot with your full movie list:']
 		data.forEach(rating => replyArray.push(`**${rating.rating}** ${rating.movies.name} ${rating?.movies?.year ? `(${rating?.movies?.year})` : ''}`))

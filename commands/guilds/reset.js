@@ -5,7 +5,7 @@ const guildStats = require('../../util/guildStats');
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('stats')
+		.setName('reset')
 		.setDescription("Get stats about your movie list.")
 		.setDMPermission(false),
 	async execute (interaction) {

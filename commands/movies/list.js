@@ -14,7 +14,7 @@ module.exports = {
 		const { movies, error } = await getGuildMovies(interaction.guild, 'rating')
 
 		if (error) {
-			return logError(interaction, error, true)
+			return logError(interaction, error, { edit: true })
 		}
 
 		const movieRatings = movies.map(movie => {

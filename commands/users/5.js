@@ -34,7 +34,7 @@ module.exports = {
 			.order('rating', { ascending: false })
 
 		if (error) {
-			return logError(interaction, error, false, false)
+			return logError(interaction, error)
 		}
 
 		const top5 = data.slice(0, 5)
