@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node deploy-guild-commands.js && node index.js",
+    "start": "node deploy-commands.js && node index.js",
+    "dev": "node deploy-guild-commands.js && node index.js",
     "deploy-test": "node deploy-guild-commands.js",
     "deploy": "node deploy-commands.js"
   },
