@@ -15,6 +15,7 @@ async function getGuildMovies (guild, sortBy) {
 			movies!guild_movies(
 				id,
 				name,
+				year,
 				ratings (
 					rating,
 					user_id

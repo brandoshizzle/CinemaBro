@@ -43,7 +43,7 @@ module.exports = {
 		let replyString = `${user.username}'s Hot & Not List\n`
 		replyString += '**Top 5:**\n'
 		replyString += top5.map(rating => `**${rating.rating}** - ${rating.movies.name}`).join('\n')
-		replyString += '**Bottom 5:**\n'
+		replyString += '\n**Bottom 5:**\n'
 		replyString += bottom5.map(rating => `**${rating.rating}** - ${rating.movies.name}`).join('\n')
 		return interaction.reply(replyString)
 	},

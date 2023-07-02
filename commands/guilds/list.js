@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const getGuildMovies = require('../../util/getGuildMovies');
 const logError = require('../../util/logError');
+const splitSend = require('../../util/splitSend');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -8,7 +9,7 @@ module.exports = {
 		.setDescription("Retrieve the cinema's movie list"),
 	async execute (interaction) {
 		// Let him cook
-		await interaction.deferReply();
+		await interaction.reply({ content: `Sure thing boss, let me load the ${interaction.guild.name} movie list...` })
 
 		// Get movies
 		const { movies, error } = await getGuildMovies(interaction.guild, 'rating')
@@ -17,15 +18,9 @@ module.exports = {
 			return logError(interaction, error, { edit: true })
 		}
 
-		const movieRatings = movies.map(movie => {
-			return {
-				name: movie.name,
-				rating: movie.ratings.reduce((sum, rating) => sum + rating.rating, 0) / movie.ratings.length
-			}
-		})
-
-		let replyString = `The ${interaction.guild.name} Movie List\n`
-		replyString = replyString + movieRatings.map(movie => `**${movie.rating}** ${movie.name}`).join('\n')
-		return interaction.editReply(replyString);
+		let replyArray = [`The ${interaction.guild.name} Movie List\n`]
+		movies.forEach(movie => replyArray.push(`**${movie.rating}** ${movie.name} ${movie?.year ? `(${movie?.year})` : ''}`))
+		await splitSend(interaction, replyArray, { edit: true })
+		return
 	},
 };
