@@ -9,19 +9,14 @@ module.exports = {
 		.setDescription("Get stats about your movie list.")
 		.setDMPermission(false),
 	async execute (interaction) {
-
+		await interaction.deferReply()
 		const { movies, error } = await getGuildMovies(interaction.guild.id, 'rating')
 
 		if (error) {
 			return logError(interaction, error)
 		}
 
-		const stats = guildStats(movies)
-		const replyArray = [
-			`${interaction.guild.name} Fast Facts`,
-			`**Average Movie:** ${stats.mean}`
-		]
-		const replyString = replyArray.join('\n')
+		await interaction.editReply("**.oOo.oOo.oOo.oOo.   WELCOME TO MANN CINEMAS   .oOo.oOo.oOo.oOo.**\nType a / into the message bar to see all my commands!")
 		return interaction.reply(replyString);
 	},
 };

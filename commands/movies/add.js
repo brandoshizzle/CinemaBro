@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('discord.js');
 const supabase = require('../../db');
 const logError = require('../../util/logError');
+const affirmation = require('../../data/affirmations');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -79,7 +80,6 @@ module.exports = {
 			}
 		}
 
-
-		return interaction.reply(`Sick, I added ${newMovie.name} to ${guildOrUser.name}.`);
+		return interaction.reply(`${affirmation()} I added ${newMovie.name} to ${guildOrUser.name}.\n You can now rate it using /rate!`);
 	},
 };

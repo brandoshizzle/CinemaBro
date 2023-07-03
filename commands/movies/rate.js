@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 const supabase = require('../../db');
 const logError = require('../../util/logError');
 const movieAutoComplete = require('../../util/movieAutoComplete');
+const affirmation = require('../../data/affirmations');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -80,7 +81,7 @@ module.exports = {
 			return logError(interaction, ratingError)
 		}
 
-		return interaction.reply(`<@${interaction.user.id}> just gave ${movie.name} a **${rating}**.`)
+		return interaction.reply(`${affirmation()} <@${interaction.user.id}> just gave ${movie.name} a **${rating}**.`)
 
 	},
 };
