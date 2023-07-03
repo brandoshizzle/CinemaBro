@@ -1,4 +1,4 @@
-const getAllMovies = require("./getAllMovies");
+const getAllMovies = require("../functions/getAllMovies");
 
 async function movieAutoComplete (interaction) {
 	const focusedValue = interaction.options.getFocused();

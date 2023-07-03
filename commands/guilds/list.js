@@ -12,14 +12,13 @@ module.exports = {
 		await interaction.reply({ content: `Sure thing boss, let me load the ${interaction.guild.name} movie list...` })
 
 		// Get movies
-		const { movies, error } = await getGuildMovies(interaction.guild, 'rating')
+		const { moviesMessageArray, error } = await getGuildMovies(interaction.guild, 'rating')
 
 		if (error) {
 			return logError(interaction, error, { edit: true })
 		}
 
-		let replyArray = [`__The ${interaction.guild.name} Movie List__`]
-		movies.forEach(movie => replyArray.push(`**${movie.rating}** ${movie.name} ${movie?.year ? `(${movie?.year})` : ''}`))
+		let replyArray = [`__The ${interaction.guild.name} Movie List__`].concat(moviesMessageArray)
 		await splitSend(interaction, replyArray, { edit: true })
 		return
 	},

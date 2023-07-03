@@ -16,17 +16,8 @@ module.exports = {
 			return logError(interaction, error)
 		}
 
-		const stats = await guildStats(movies)
-		const replyArray = [
-			`${interaction.guild.name} Fast Facts`,
-			`**Average Rating:** ${stats.mean}`,
-			`**Highest Rated Movie:** ${stats.max.name} with ${stats.max.rating}`,
-			`**Lowest Rated Movie:** ${stats.min.name} with ${stats.min.rating}`,
-			`**Median Rating:** ${stats.median.rating} (${stats.median.name})`,
-			`**Highest Average Rating:** ${stats.maxAverage.average} (${stats.maxAverage.name})`,
-			`**Lowest Average Rating:** ${stats.minAverage.average} (${stats.minAverage.name})`,
-		]
-		const replyString = replyArray.join('\n')
-		return interaction.reply(replyString);
+		const { statsMessage } = await guildStats(interaction, movies)
+
+		return interaction.reply(statsMessage);
 	},
 };

@@ -1,6 +1,6 @@
 const supabase = require("../db")
 const getMovieRating = require("./getMovieRating")
-const getGuildMembers = require("./getGuildMembers")
+const getGuildMembers = require("../functions/getGuildMembers")
 
 async function getGuildMovies (guild, sortBy) {
 
@@ -41,7 +41,10 @@ async function getGuildMovies (guild, sortBy) {
 		movies.sort()
 	}
 
-	return { movies, error }
+	const moviesMessageArray = []
+	movies.forEach(movie => moviesMessageArray.push(`\`${movie.rating.toFixed(1)}  ${movie.name} ${movie?.year ? `(${movie?.year})` : ''}\``))
+
+	return { movies, moviesMessageArray, error }
 }
 
 module.exports = getGuildMovies

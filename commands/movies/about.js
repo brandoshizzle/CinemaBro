@@ -3,7 +3,7 @@ const supabase = require('../../db');
 const logError = require('../../util/logError');
 const movieAutoComplete = require('../../util/movieAutoComplete');
 const getMovieRating = require('../../util/getMovieRating');
-const getGuildMembers = require('../../util/getGuildMembers');
+const getGuildMembers = require('../../functions/getGuildMembers');
 const fuzzyMatchGuildMovie = require('../../util/fuzzyMatchGuildMovie');
 
 module.exports = {
@@ -61,7 +61,7 @@ module.exports = {
 			fields: [
 				{
 					name: 'Rating',
-					value: movie.ratings.length > 0 ? getMovieRating(movie.ratings) : 0
+					value: movie.ratings.length > 0 ? getMovieRating(movie.ratings).toFixed(1) : 0
 				},
 				{
 					name: 'Ratings',
