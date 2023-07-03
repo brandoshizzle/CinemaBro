@@ -18,7 +18,7 @@ module.exports = {
 			return logError(interaction, error, { edit: true })
 		}
 
-		let replyArray = [`The ${interaction.guild.name} Movie List\n`]
+		let replyArray = [`__The ${interaction.guild.name} Movie List__`]
 		movies.forEach(movie => replyArray.push(`**${movie.rating}** ${movie.name} ${movie?.year ? `(${movie?.year})` : ''}`))
 		await splitSend(interaction, replyArray, { edit: true })
 		return
