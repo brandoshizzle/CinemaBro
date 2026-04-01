@@ -6,3 +6,5 @@
 - /me - user movie list and stats
 - stats - user that votes most with the group and least with the group
 - show unwatched guild movies to user
+- Remove /n from end of reset
+- Show current rating after all ratings

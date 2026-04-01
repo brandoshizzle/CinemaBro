@@ -1,14 +1,14 @@
 const client = require('../client')
 
 async function getUsername (guildID, userID) {
+	if (!userID) return "Mystery User"
 	const guildData = client.guilds.cache.get(guildID)
-	const members = await guildData.members.fetch()
-	const users = members.map(m => ({ id: m.user.id, name: m.displayName }))
-	const userIndex = users.findIndex(u => u.id === userID)
-	if (userIndex > -1) {
-		return users[userIndex].name
+	try {
+		const member = await guildData.members.fetch(userID)
+		return member.displayName
+	} catch (e) {
+		return "Mystery User"
 	}
-	return "Mystery User"
 }
 
 module.exports = getUsername
