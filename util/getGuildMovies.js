@@ -1,6 +1,6 @@
-const supabase = require("../db")
 const getMovieRating = require("./getMovieRating")
 const getGuildMembers = require("../functions/getGuildMembers")
+const { Guilds } = require("../schema/schema")
 
 async function getGuildMovies (guild, sortBy) {
 
@@ -8,24 +8,21 @@ async function getGuildMovies (guild, sortBy) {
 	const members = await getGuildMembers(guild.id)
 
 	// Get movies
-	const { data, error } = await supabase
-		.from('guilds')
-		.select(`
-			id,
-			movies!guild_movies(
-				id,
-				name,
-				year,
-				ratings (
-					rating,
-					user_id
-				)
-			)
-		`)
-		.eq('id', guild.id)
-		.in('movies.ratings.user_id', members.map(m => m.id))
-		.single()
-
+	let data, error
+	try {
+		// Fetch movies and ratings, but filter out ratings from users not in guild
+		data = await Guilds.findOne({ id: guild.id }).populate({
+			path: 'movies',
+			populate: {
+				path: 'ratings',
+				model: 'Rating',
+				match: { user_id: { $in: members.map(m => m.id) } }
+			}
+		})
+	} catch (err) {
+		console.error('Error fetching guild movies from MongoDB:', err)
+		error = 'Failed to fetch guild movies: ' + err.message
+	}
 	// Calculate overall guild ratings & sort descending
 	const movies = data.movies.map(movie => ({
 		...movie,

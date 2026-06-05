@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const supabase = require('../../db');
+const { Ratings } = require('../../schema/schema')
 const logError = require('../../util/logError');
 const splitSend = require('../../util/splitSend')
 
@@ -9,19 +9,17 @@ module.exports = {
 		.setDescription('Retrieve your movie list'),
 	async execute (interaction) {
 		await interaction.reply({ content: 'No prob, grabbing your movie list for ya.', ephemeral: true })
-		// Get movies
-		const { data, error } = await supabase
-			.from('ratings')
-			.select(`
-					movies(
-						id,
-						name,
-						year
-					),
-					rating
-				`)
-			.eq('user_id', interaction.user.id)
-			.order('rating', { ascending: false })
+		// Get ratings for user
+		let data, error
+		try {
+			data = await Ratings.find({ user_id: interaction.user.id })
+				.populate('movies', 'id name year')
+				.sort({ rating: -1 })
+				.lean()
+		} catch (err) {
+			console.error('Error fetching ratings from MongoDB:', err)
+			error = 'Failed to fetch ratings: ' + err.message
+		}
 
 		if (error) {
 			return logError(interaction, error, { ephemeral: true, edit: true })

@@ -36,7 +36,9 @@ const ratingSchema = new Schema({
 ratingSchema.index({ '_id.movie_id': 1 });  // replaces idx_ratings_movie_id
 ratingSchema.index({ '_id.user_id': 1 });  // replaces idx_ratings_user_id
 
-export const Movie = mongoose.model('Movie', movieSchema);
-export const User = mongoose.model('User', userSchema);
-export const Guild = mongoose.model('Guild', guildSchema);
-export const Rating = mongoose.model('Rating', ratingSchema);
+module.exports = {
+	Movies: mongoose.model('Movie', movieSchema),
+	Users: mongoose.model('User', userSchema),
+	Guilds: mongoose.model('Guild', guildSchema),
+	Ratings: mongoose.model('Rating', ratingSchema)
+}

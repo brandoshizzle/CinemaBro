@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const supabase = require('../../db');
+const { Movies } = require('../../schema/schema')
 const logError = require('../../util/logError');
 const movieAutoComplete = require('../../util/movieAutoComplete');
 const getMovieRating = require('../../util/getMovieRating');
@@ -28,18 +28,15 @@ module.exports = {
 		// Movie proivded, check if ID matches up
 		const movieIdNumber = isNaN(passedMovieId) ? await fuzzyMatchGuildMovie(passedMovieId, interaction.guild) : Number(passedMovieId)
 
-		// Find movie by id
-		const { data: movie, error } = await supabase
-			.from('movies')
-			.select(`
-				*,
-				ratings (
-					rating,
-					user_id
-				)
-			`)
-			.eq('id', movieIdNumber)
-			.single()
+		let movie, error
+		try {
+			movie = await Movies.findOne(
+				{ id: movieIdNumber }
+			).populate('ratings').lean()
+		} catch (err) {
+			console.error('Error fetching movie from MongoDB:', err)
+			error = 'Failed to fetch movie: ' + err.message
+		}
 
 		if (error) {
 			return logError(interaction, error)

@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const supabase = require('../../db');
+const { Ratings } = require('../../schema/schema')
 const logError = require('../../util/logError');
 
 module.exports = {
@@ -20,18 +20,16 @@ module.exports = {
 		}
 
 		// Get movies
-		const { data, error } = await supabase
-			.from('ratings')
-			.select(`
-					movies(
-						id,
-						name,
-						year
-					),
-					rating
-				`)
-			.eq('user_id', user.id)
-			.order('rating', { ascending: false })
+		let data, error
+		try {
+			data = await Ratings.find({ user_id: user.id })
+				.populate('movies', 'id name year')
+				.sort({ rating: -1 })
+				.lean()
+		} catch (err) {
+			console.error('Error fetching ratings from MongoDB:', err)
+			error = 'Failed to fetch ratings: ' + err.message
+		}
 
 		if (error) {
 			return logError(interaction, error)

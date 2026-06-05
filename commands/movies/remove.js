@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const supabase = require('../../db');
+const { Movies, Guilds } = require('../../schema/schema')
 const movieAutoComplete = require('../../util/movieAutoComplete');
 const logError = require('../../util/logError');
 
@@ -20,23 +20,29 @@ module.exports = {
 	async execute (interaction) {
 		const movieID = interaction.options.getString('movie');
 
-		// Get movie
-		const { data: movie, error: movieError } = await supabase
-			.from('movies')
-			.select()
-			.eq('id', movieID)
-			.single()
+		let movie, movieError
+		try {
+			movie = await Movies.findOne({ id: movieID }).lean()
+		} catch (err) {
+			console.error('Error fetching movie from MongoDB:', err)
+			movieError = 'Failed to fetch movie: ' + err.message
+		}
 
-		if (movieError) {
+		if (movieError || !movie) {
 			return logError(interaction, movieError)
 		}
 
 		// If in a guild, update Guild Movies table
-		const { error: guildMoviesError } = await supabase
-			.from('guild_movies')
-			.delete()
-			.eq('movie_id', movie.id)
-			.eq('guild_id', interaction.guild.id)
+		let guildMoviesError
+		try {
+			await Guilds.updateOne(
+				{ id: interaction.guild.id },
+				{ $pull: { movies: movie.id } }
+			)
+		} catch (err) {
+			console.error('Error deleting guild movie from MongoDB:', err)
+			guildMoviesError = 'Failed to delete guild movie: ' + err.message
+		}
 
 		if (guildMoviesError) {
 			return logError(interaction, guildMoviesError)
