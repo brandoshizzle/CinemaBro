@@ -1,7 +1,11 @@
 const sb = require('@supabase/supabase-js')
-const { supabaseKey } = require('./config.json');
+const { supabaseKey, supabaseUrl, databaseUrl } = require('./config');
+
+if (!supabaseKey && !databaseUrl) {
+	throw new Error('Missing required environment variable: SUPABASE_KEY')
+}
 
 // Create a single supabase client for interacting with your database
-const supabase = sb.createClient('https://ontflizqvczcpbbpwvgg.supabase.co', supabaseKey)
+const supabase = sb.createClient(supabaseUrl, supabaseKey || 'dev-placeholder-key')
 
 module.exports = supabase

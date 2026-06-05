@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const supabase = require('../../db');
+const store = require('../../db/store');
 const logError = require('../../util/logError');
 
 module.exports = {
@@ -16,32 +16,8 @@ module.exports = {
 
 		const passedMovieTitle = interaction.options.getString('movie');
 
-
-		// Get user wishlist
-		const { data, error } = await supabase
-			.from('users')
-			.select('id, wishlist')
-			.eq('id', interaction.user.id)
-
+		const { error } = await store.appendUserWishlistItem(interaction.user.id, passedMovieTitle);
 		if (error) {
-			return logError(interaction, error, { ephemeral: true, edit: true })
-		}
-
-		let user = {}
-		if (data && data.length === 1) {
-			user = data[0]
-		} else {
-			user = { id: interaction.user.id, wishlist: [] }
-		}
-
-		user.wishlist.push(passedMovieTitle)
-
-		// Write back to db
-		const { error: writeError } = await supabase
-			.from('users')
-			.upsert(user)
-
-		if (writeError) {
 			return logError(interaction, error, { ephemeral: true, edit: true })
 		}
 

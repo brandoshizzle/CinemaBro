@@ -1,7 +1,11 @@
 const { REST, Routes } = require('discord.js');
-const { clientId, guildId, token } = require('./config.json');
+const { clientId, guildId, token } = require('./config');
 const fs = require('node:fs');
 const path = require('node:path');
+
+if (!guildId) {
+	throw new Error('Missing required environment variable: DISCORD_GUILD_ID');
+}
 
 const commands = [];
 // Grab all the command files from the commands directory you created earlier

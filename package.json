@@ -7,6 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node deploy-commands.js && node index.js",
     "dev": "node deploy-guild-commands.js && node index.js",
+    "seed:dev": "node scripts/seed-dev-data.js",
+    "dev:seeded": "npm run seed:dev && node deploy-guild-commands.js && node index.js",
+    "compose:dev:up": "docker compose -f docker-compose.dev.yml up -d --build",
+    "compose:dev:down": "docker compose -f docker-compose.dev.yml down",
     "deploy-test": "node deploy-guild-commands.js",
     "deploy": "node deploy-commands.js"
   },
@@ -23,9 +27,11 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.24.0",
     "discord.js": "^14.11.0",
+    "dotenv": "^17.3.1",
     "embed-table": "^4.2.3",
     "fuse.js": "^6.6.2",
     "jstat": "^1.9.6",
+    "pg": "^8.20.0",
     "sequelize": "^6.32.0",
     "sqlite3": "^5.1.6"
   },
