@@ -1,4 +1,5 @@
 const supabase = require("../db")
+const { Movie } = require("../schema/schema")
 
 async function getAllMovies () {
 	// Get movies
@@ -8,6 +9,15 @@ async function getAllMovies () {
 			id,
 			name
 		`)
+
+	// Mongoose equivalent
+	let data, error
+	try {
+		data = await Movie.find({}, 'id name').lean()
+	} catch (err) {
+		console.error('Error fetching movies from MongoDB:', err)
+		error = 'Failed to fetch movies: ' + err.message
+	}
 
 	if (data && data.length > 0) {
 		return {

@@ -1,0 +1,18 @@
+[Unit]
+Description=CinemaBro GitHub Webhook Server
+After=network.target
+Wants=cinemabro.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/cinemabro
+ExecStart=/usr/bin/node /opt/cinemabro/scripts/webhook-server.js
+Restart=always
+RestartSec=10
+Environment="WEBHOOK_PORT=3001"
+Environment="WEBHOOK_SECRET=change_me_in_github_settings"
+Environment="DEPLOYMENT_DIR=/opt/cinemabro"
+
+[Install]
+WantedBy=multi-user.target

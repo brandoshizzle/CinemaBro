@@ -22,10 +22,14 @@
   "homepage": "https://github.com/brandoshizzle/CinemaBro#readme",
   "dependencies": {
     "@supabase/supabase-js": "^2.24.0",
+    "csv-parse": "^6.2.1",
     "discord.js": "^14.11.0",
+    "dotenv": "^17.4.2",
     "embed-table": "^4.2.3",
     "fuse.js": "^6.6.2",
     "jstat": "^1.9.6",
+    "mongodb": "^7.2.0",
+    "mongoose": "^9.6.3",
     "sequelize": "^6.32.0",
     "sqlite3": "^5.1.6"
   },
