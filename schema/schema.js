@@ -5,40 +5,39 @@ const { Schema } = mongoose;
 const movieSchema = new Schema({
 	name: { type: String, required: true, unique: true },
 	year: { type: Number },
-});
-movieSchema.index({ name: 1 });  // replaces idx_movies_name_lower (use collation instead)
+}, { collection: 'movies' });
 
 // ── Users ────────────────────────────────────────────────
 const userSchema = new Schema({
 	_id: { type: String },   // Discord user ID
-	latest_movie: { type: Schema.Types.ObjectId, ref: 'Movie' },
+	latest_movie: { type: Schema.Types.ObjectId, ref: 'Movies' },
 	wishlist: { type: [String], default: [] },
-}, { _id: false });
+}, { collection: 'users' });
 
 // ── Guilds ───────────────────────────────────────────────
 const guildSchema = new Schema({
 	_id: { type: String },   // Discord guild ID
 	name: { type: String, required: true },
-	latest_movie: { type: Schema.Types.ObjectId, ref: 'Movie' },
+	latest_movie: { type: Schema.Types.ObjectId, ref: 'Movies' },
 	blacklist: { type: [String], default: [] },
-	movies: { type: [Schema.Types.ObjectId], ref: 'Movie', default: [] },
-}, { _id: false });
+	movies: { type: [Schema.Types.ObjectId], ref: 'Movies', default: [] },
+}, { collection: 'guilds' });
 
 // ── Ratings ──────────────────────────────────────────────
 const ratingSchema = new Schema({
 	_id: {
 		user_id: { type: String, required: true },
-		movie_id: { type: Schema.Types.ObjectId, required: true, ref: 'Movie' },
+		movie_id: { type: Schema.Types.ObjectId, required: true, ref: 'Movies' },
 	},
 	rating: { type: Number, required: true, min: 0, max: 100 },
-}, { _id: false });
+}, { collection: 'ratings' });
 
 ratingSchema.index({ '_id.movie_id': 1 });  // replaces idx_ratings_movie_id
 ratingSchema.index({ '_id.user_id': 1 });  // replaces idx_ratings_user_id
 
 module.exports = {
-	Movies: mongoose.model('Movie', movieSchema),
-	Users: mongoose.model('User', userSchema),
-	Guilds: mongoose.model('Guild', guildSchema),
-	Ratings: mongoose.model('Rating', ratingSchema)
+	Movies: mongoose.model('Movies', movieSchema),
+	Users: mongoose.model('Users', userSchema),
+	Guilds: mongoose.model('Guilds', guildSchema),
+	Ratings: mongoose.model('Ratings', ratingSchema)
 }

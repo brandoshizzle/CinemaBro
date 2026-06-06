@@ -30,8 +30,9 @@ module.exports = {
 			newMovie = await Movies.findOneAndUpdate(
 				{ name: movie },
 				{ name: movie },
-				{ upsert: true, new: true }
-			).lean()
+				{ upsert: true, returnDocument: 'after' }
+			)
+			console.log('Movie added/updated in MongoDB:', newMovie)
 		} catch (err) {
 			console.error('Error adding movie to MongoDB:', err)
 			movieError = 'Failed to add movie: ' + err.message
@@ -45,10 +46,10 @@ module.exports = {
 		let guildError
 		try {
 			await Guilds.findOneAndUpdate(
-				{ id: guildOrUser.id },
+				{ _id: guildOrUser.id },
 				{
-					id: guildOrUser.id, name: guildOrUser.name, latest_movie: newMovie.id,
-					$addToSet: { movies: newMovie.id }
+					_id: guildOrUser.id, name: guildOrUser.name, latest_movie: newMovie._id,
+					$addToSet: { movies: newMovie._id }
 				},
 				{ upsert: true }
 			)
@@ -66,8 +67,8 @@ module.exports = {
 			let ratingError
 			try {
 				await Ratings.findOneAndUpdate(
-					{ user_id: interaction.user.id, movie_id: newMovie.id },
-					{ user_id: interaction.user.id, movie_id: newMovie.id, rating: rating },
+					{ user_id: interaction.user.id, movie_id: newMovie._id },
+					{ user_id: interaction.user.id, movie_id: newMovie._id, rating: rating },
 					{ upsert: true }
 				)
 			} catch (err) {

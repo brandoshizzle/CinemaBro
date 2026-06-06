@@ -22,10 +22,17 @@ module.exports = {
 		// Get movies
 		let data, error
 		try {
-			data = await Ratings.find({ user_id: user.id })
-				.populate('movies', 'id name year')
+			console.log('Fetching ratings for user ID:', user.id)
+			data = await Ratings.find({ '_id.user_id': user.id })
+				.populate('_id.movie_id', 'id name year')
 				.sort({ rating: -1 })
 				.lean()
+			data = data.map(rating => {
+				rating.movie = rating._id.movie_id;
+				delete rating._id.movie_id;
+				return rating;
+			});
+			console.log('Ratings data:', data)
 		} catch (err) {
 			console.error('Error fetching ratings from MongoDB:', err)
 			error = 'Failed to fetch ratings: ' + err.message
@@ -40,9 +47,9 @@ module.exports = {
 
 		let replyString = `${user.username}'s Hot & Not List\n`
 		replyString += '**Top 5:**\n'
-		replyString += top5.map(rating => `**${rating.rating}** - ${rating.movies.name}`).join('\n')
+		replyString += top5.map(rating => `**${rating.rating}** - ${rating.movie.name}`).join('\n')
 		replyString += '\n**Bottom 5:**\n'
-		replyString += bottom5.map(rating => `**${rating.rating}** - ${rating.movies.name}`).join('\n')
+		replyString += bottom5.map(rating => `**${rating.rating}** - ${rating.movie.name}`).join('\n')
 		return interaction.reply(replyString)
 	},
 };

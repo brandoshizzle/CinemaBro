@@ -33,7 +33,7 @@ module.exports = {
 			// No movie proivded, get latest from guild
 			let data, error
 			try {
-				data = await Guilds.findOne({ id: interaction.guild.id }).populate({
+				data = await Guilds.findOne({ _id: interaction.guild.id }).populate({
 					path: 'latest_movie',
 					select: 'id name'
 				})
@@ -54,15 +54,14 @@ module.exports = {
 
 		} else {
 			// Movie proivded, check if ID matches up
-			const movieIdNumber = isNaN(passedMovieId) ? null : Number(passedMovieId)
-			if (movieIdNumber === null) {
+			if (passedMovieId === null) {
 				return interaction.reply(`${passedMovieId} wasn't not found in the database - use /add to add it!`)
 			}
 
 			// Fetch movie by ID
 			let movie, error
 			try {
-				movie = await Movies.findOne({ id: movieIdNumber }, 'id name').lean()
+				movie = await Movies.findOne({ _id: passedMovieId }, 'id name').lean()
 			} catch (err) {
 				console.error('Error fetching movie from MongoDB:', err)
 				error = 'Failed to fetch movie: ' + err.message
@@ -77,11 +76,13 @@ module.exports = {
 		// Update or add rating
 		let ratingError
 		try {
-			await Ratings.findOneAndUpdate(
-				{ user_id: interaction.user.id, movie_id: movie.id },
-				{ user_id: interaction.user.id, movie_id: movie.id, rating: rating },
-				{ upsert: true }
+			const res = await Ratings.findOneAndUpdate(
+				{ '_id.user_id': interaction.user.id, '_id.movie_id': movie._id },
+				{ '_id.user_id': interaction.user.id, '_id.movie_id': movie._id, rating: rating },
+				{ upsert: true, returnDocument: 'after' }
 			)
+
+			console.log(res)
 		} catch (err) {
 			console.error('Error adding/updating rating in MongoDB:', err)
 			ratingError = 'Failed to add/update rating: ' + err.message

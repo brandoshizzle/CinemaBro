@@ -1,7 +1,16 @@
+require('dotenv').config();
 const fs = require('node:fs');
 const path = require('node:path');
 const { Collection, Events } = require('discord.js');
-const { token } = require('./config.json');
+
+// Initialize MongoDB connection
+require('./db');
+
+const token = process.env.DISCORD_TOKEN;
+
+if (!token) {
+	throw new Error('DISCORD_TOKEN environment variable is not set');
+}
 
 const client = require('./client')
 

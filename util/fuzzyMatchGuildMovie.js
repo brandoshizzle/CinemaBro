@@ -10,7 +10,7 @@ async function fuzzyMatchGuildMovie (name, guild, movieArray) {
 
 	const result = fuse.search(name)
 
-	return Number(result[0].item.id)
+	return result[0].item.id
 
 }
 

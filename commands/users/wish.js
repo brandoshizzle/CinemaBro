@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const supabase = require('../../db');
+const { Users } = require('../../schema/schema')
 const logError = require('../../util/logError');
 
 module.exports = {
@@ -18,18 +18,21 @@ module.exports = {
 
 
 		// Get user wishlist
-		const { data, error } = await supabase
-			.from('users')
-			.select('id, wishlist')
-			.eq('id', interaction.user.id)
+		let data, error
+		try {
+			data = await Users.findOne({ id: interaction.user.id }).lean()
+		} catch (err) {
+			console.error('Error fetching user from MongoDB:', err)
+			error = 'Failed to fetch user: ' + err.message
+		}
 
 		if (error) {
 			return logError(interaction, error, { ephemeral: true, edit: true })
 		}
 
 		let user = {}
-		if (data && data.length === 1) {
-			user = data[0]
+		if (data) {
+			user = data
 		} else {
 			user = { id: interaction.user.id, wishlist: [] }
 		}
@@ -37,9 +40,13 @@ module.exports = {
 		user.wishlist.push(passedMovieTitle)
 
 		// Write back to db
-		const { error: writeError } = await supabase
-			.from('users')
-			.upsert(user)
+		let writeError
+		try {
+			await Users.updateOne({ id: interaction.user.id }, user, { upsert: true })
+		} catch (err) {
+			console.error('Error writing user to MongoDB:', err)
+			writeError = 'Failed to write user: ' + err.message
+		}
 
 		if (writeError) {
 			return logError(interaction, error, { ephemeral: true, edit: true })
