@@ -1,5 +1,12 @@
+require('dotenv').config();
 const { REST, Routes } = require('discord.js');
-const { clientId, token } = require('./config.json');
+
+const clientId = process.env.DISCORD_CLIENT_ID;
+const token = process.env.DISCORD_TOKEN;
+
+if (!clientId || !token) {
+	throw new Error('DISCORD_CLIENT_ID and DISCORD_TOKEN environment variables are required');
+}
 const fs = require('node:fs');
 const path = require('node:path');
 

@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const supabase = require('../../db');
+const { Guilds } = require('../../schema/schema')
 const logError = require('../../util/logError');
 
 module.exports = {
@@ -16,10 +16,14 @@ module.exports = {
 		const user = interaction.options.getUser('user');
 
 		// Get current blacklist
-		const { data: oldBlacklist, error: getBlacklistError } = await supabase
-			.from('guilds')
-			.select('blacklist')
-			.eq('id', interaction.guild.id)
+		let oldBlacklist, getBlacklistError
+		try {
+			oldBlacklist = await Guilds.findOne({ id: interaction.guild.id }, { blacklist: 1 }).lean()
+				.then(guild => guild ? guild.blacklist : [])
+		} catch (err) {
+			console.error('Error fetching guild from MongoDB:', err)
+			getBlacklistError = 'Failed to fetch guild: ' + err.message
+		}
 
 		const newBlacklist = oldBlacklist.push(user.id)
 
@@ -27,10 +31,13 @@ module.exports = {
 			return logError(interaction, updateBlacklistError, { ephemeral: true })
 		}
 
-		const { error: updateBlacklistError } = await supabase
-			.from('guilds')
-			.update({ blacklist: newBlacklist })
-			.eq('id', interaction.guild.id)
+		let updateBlacklistError
+		try {
+			await Guilds.updateOne({ id: interaction.guild.id }, { blacklist: newBlacklist }, { upsert: true })
+		} catch (err) {
+			console.error('Error updating guild in MongoDB:', err)
+			updateBlacklistError = 'Failed to update guild: ' + err.message
+		}
 
 		if (updateBlacklistError) {
 			return logError(interaction, updateBlacklistError, { ephemeral: true })

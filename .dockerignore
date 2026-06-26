@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+README.md
+LICENSE
+.env
+.env.local
+.env.*.local
+.env.mongodb
+db/exported.json
+.vscode
+.DS_Store

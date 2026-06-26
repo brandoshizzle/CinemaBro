@@ -1,10 +1,10 @@
 const { SlashCommandBuilder } = require('discord.js');
-const supabase = require('../../db');
+const { Movies, Ratings } = require('../../schema/schema')
 const logError = require('../../util/logError');
 const movieAutoComplete = require('../../util/movieAutoComplete');
 const getMovieRating = require('../../util/getMovieRating');
 const getGuildMembers = require('../../functions/getGuildMembers');
-const fuzzyMatchGuildMovie = require('../../util/fuzzyMatchGuildMovie');
+// const fuzzyMatchGuildMovie = require('../../util/fuzzyMatchGuildMovie');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -24,31 +24,30 @@ module.exports = {
 
 		const passedMovieId = interaction.options.getString('movie');
 		const members = await getGuildMembers(interaction.guild.id)
+		// Movie provided, check if ID matches up
+		// const movieId = passedMovieId ? await fuzzyMatchGuildMovie(passedMovieId, interaction.guild) : passedMovieId
+		const movieId = passedMovieId
+		let movie, ratings, error
+		try {
+			movie = await Movies.findOne(
+				{ _id: movieId }
+			).lean()
+			ratings = await Ratings.find({ '_id.movie_id': movieId, '_id.user_id': { $in: members.map(m => m.id) } }).lean()
 
-		// Movie proivded, check if ID matches up
-		const movieIdNumber = isNaN(passedMovieId) ? await fuzzyMatchGuildMovie(passedMovieId, interaction.guild) : Number(passedMovieId)
-
-		// Find movie by id
-		const { data: movie, error } = await supabase
-			.from('movies')
-			.select(`
-				*,
-				ratings (
-					rating,
-					user_id
-				)
-			`)
-			.eq('id', movieIdNumber)
-			.single()
+			movie.ratings = ratings
+		} catch (err) {
+			console.error('Error fetching movie from MongoDB:', err)
+			error = 'Failed to fetch movie: ' + err.message
+		}
 
 		if (error) {
 			return logError(interaction, error)
 		}
 
 		if (movie?.ratings && movie.ratings.length > 0) {
-			movie.ratings = movie.ratings.filter(r => members.map(m => m.id).includes(r.user_id)).map(r => ({
+			movie.ratings = movie.ratings.filter(r => members.map(m => m.id).includes(r._id.user_id)).map(r => ({
 				...r,
-				user_name: members.find(m => m.id === r.user_id).name
+				user_name: members.find(m => m.id === r._id.user_id).name
 			}))
 		}
 

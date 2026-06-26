@@ -1,6 +1,5 @@
 const client = require("../client")
 
-
 async function getGuildMembers (guildID) {
 
 	const guildData = client.guilds.cache.get(guildID)
