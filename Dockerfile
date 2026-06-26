@@ -1,5 +1,5 @@
-# Use official Node.js runtime as base image
-FROM node:18-alpine
+# Use official Node.js Slim runtime as base image (lightweight, includes essentials)
+FROM node:20-slim
 
 # Set working directory
 WORKDIR /app
@@ -13,9 +13,9 @@ RUN npm ci --only=production
 # Copy application code
 COPY . .
 
-# Create non-root user for security
-RUN addgroup -g 1001 -S nodejs && \
-	adduser -S nodejs -u 1001
+# Create non-root user for security (Debian syntax)
+RUN groupadd --gid 1001 nodejs && \
+	useradd --uid 1001 --gid nodejs --shell /usr/sbin/nologin nodejs
 
 USER nodejs
 

@@ -4,7 +4,10 @@ const mongoose = require('mongoose');
 const mongoUri = process.env.MONGODB_URI;
 
 if (!mongoUri) {
-	throw new Error('MONGODB_URI environment variable is not set');
+	console.error('❌ MONGODB_URI environment variable is not set!');
+	console.error('Please set MONGODB_URI before starting the container.');
+	console.error('Example: mongodb+srv://username:password@cluster.mongodb.net/cinemabro');
+	process.exit(1);
 }
 
 // Connect to MongoDB

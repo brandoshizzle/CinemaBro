@@ -1,0 +1,7 @@
+# This file is automatically used by docker compose for local development.
+# It overrides docker-compose.yml to build the image locally instead of pulling from GHCR.
+# Do NOT deploy this file to your server.
+services:
+  cinemabro:
+    image: cinemabro-local
+    build: .

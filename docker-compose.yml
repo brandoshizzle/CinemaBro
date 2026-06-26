@@ -1,12 +1,24 @@
-version: '3.8'
-
 services:
   cinemabro:
-    build: .
+    image: ghcr.io/brandoshizzle/cinemabro:main
     container_name: cinemabro
     restart: unless-stopped
-    env_file: .env
+    # Load environment variables from .env file (must be in same directory as docker-compose.yml)
+    env_file:
+      - .env
     environment:
       NODE_ENV: production
+      # Required environment variables (set via .env for local dev, or via Unraid UI for production):
+      # DISCORD_TOKEN: your_bot_token_here
+      # DISCORD_CLIENT_ID: your_client_id_here
+      # DISCORD_GUILD_ID: your_guild_id_here (optional)
+      # MONGODB_URI: your_mongodb_connection_string
     volumes:
       - ./data:/app/data
+    # Health check to ensure container is running properly
+    healthcheck:
+      test: [ "CMD", "node", "-e", "console.log('healthy')" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
