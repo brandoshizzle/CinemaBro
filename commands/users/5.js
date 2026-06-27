@@ -32,7 +32,7 @@ module.exports = {
 				delete rating._id.movie_id;
 				return rating;
 			});
-			console.log('Ratings data:', data)
+			// console.log('Ratings data:', data)
 		} catch (err) {
 			console.error('Error fetching ratings from MongoDB:', err)
 			error = 'Failed to fetch ratings: ' + err.message

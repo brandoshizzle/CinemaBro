@@ -2,6 +2,13 @@ require('dotenv').config();
 const fs = require('node:fs');
 const path = require('node:path');
 const { Collection, Events } = require('discord.js');
+const dns = require('dns');
+
+if (process.platform === 'win32') {
+	console.log('⚠ Running in emulator mode on Windows - setting DNS servers to avoid IPv6 issues');
+	dns.setDefaultResultOrder('ipv4first');
+	dns.setServers(['1.1.1.1', '1.0.0.1', '8.8.8.8', '8.8.4.4']);
+}
 
 // Initialize MongoDB connection
 require('./db');

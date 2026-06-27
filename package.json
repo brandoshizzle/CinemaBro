@@ -1,39 +1,39 @@
 {
-  "name": "cinemabro",
-  "version": "1.0.0",
-  "description": "Discord Movie Bot",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node deploy-commands.js && node index.js",
-    "dev": "node deploy-guild-commands.js && node index.js",
-    "deploy-test": "node deploy-guild-commands.js",
-    "deploy": "node deploy-commands.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/brandoshizzle/CinemaBro.git"
-  },
-  "author": "Brandon Cathcart",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/brandoshizzle/CinemaBro/issues"
-  },
-  "homepage": "https://github.com/brandoshizzle/CinemaBro#readme",
-  "dependencies": {
-    "@supabase/supabase-js": "^2.24.0",
-    "csv-parse": "^6.2.1",
-    "discord.js": "^14.11.0",
-    "dotenv": "^17.4.2",
-    "embed-table": "^4.2.3",
-    "fuse.js": "^6.6.2",
-    "jstat": "^1.9.6",
-    "mongodb": "^7.2.0",
-    "mongoose": "^9.6.3",
-    "sequelize": "^6.32.0",
-    "sqlite3": "^5.1.6"
-  },
-  "devDependencies": {
-    "eslint": "^8.42.0"
-  }
+	"name": "cinemabro",
+	"version": "1.0.0",
+	"description": "Discord Movie Bot",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node deploy-commands.js && node index.js",
+		"dev": "node deploy-guild-commands.js && node index.js",
+		"deploy-test": "node deploy-guild-commands.js",
+		"deploy": "node deploy-commands.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/brandoshizzle/CinemaBro.git"
+	},
+	"author": "Brandon Cathcart",
+	"license": "Apache-2.0",
+	"bugs": {
+		"url": "https://github.com/brandoshizzle/CinemaBro/issues"
+	},
+	"homepage": "https://github.com/brandoshizzle/CinemaBro#readme",
+	"dependencies": {
+		"@supabase/supabase-js": "^2.24.0",
+		"csv-parse": "^6.2.1",
+		"discord.js": "^14.11.0",
+		"dotenv": "^17.4.2",
+		"embed-table": "^4.2.3",
+		"fuse.js": "^6.6.2",
+		"jstat": "^1.9.6",
+		"mongodb": "^7.2.0",
+		"mongoose": "^9.6.3",
+		"sequelize": "^6.32.0",
+		"sqlite3": "^5.1.6"
+	},
+	"devDependencies": {
+		"eslint": "^8.42.0"
+	}
 }
