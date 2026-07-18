@@ -1,5 +1,5 @@
 # Use official Node.js Slim runtime as base image (lightweight, includes essentials)
-FROM node:20-slim
+FROM node:22-slim
 
 # Set working directory
 WORKDIR /app
@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
 # Copy application code
 COPY . .
