@@ -67,8 +67,8 @@ module.exports = async function guildStats (interaction, movieList) {
 			`Median movie: **${stats.median.rating.toFixed(1)}** ${stats.median.name}`,
 			`Biggest enjoyer: **${stats.maxAverage.name}** (average rating: ${stats.maxAverage.average === null ? 'N/A' : stats.maxAverage.average.toFixed(1)})`,
 			`Harshest critic: **${stats.minAverage.name}** (average rating: ${stats.minAverage.average === null ? 'N/A' : stats.minAverage.average.toFixed(1)})`,
-			`Most polarizing movie: **${stats.maxstdev.name}** (standard devation: ${stats.maxstdev.stdev === null ? 'N/A' : stats.maxstdev.stdev.toFixed(1)})`,
-			`Least polarizing movie: **${stats.minstdev.name}** (standard devation: ${stats.minstdev.stdev === null ? 'N/A' : stats.minstdev.stdev.toFixed(1)})`,
+			`Most divisive movie: **${stats.maxstdev.name}** (standard devation: ${stats.maxstdev.stdev === null ? 'N/A' : stats.maxstdev.stdev.toFixed(1)})`,
+			`Least divisive movie: **${stats.minstdev.name}** (standard devation: ${stats.minstdev.stdev === null ? 'N/A' : stats.minstdev.stdev.toFixed(1)})`,
 		]
 		const statsMessage = statsMessageArray.join('\n')
 

@@ -30,7 +30,7 @@ async function getGuildMovies (guild, sortBy) {
 		}))
 
 		console.log(`Fetched ${data?.movies?.length || 0} movies for guild ${guild.name} (${guild.id})`)
-		console.log('example movie:', data)
+		// console.log('example movie:', data)
 	} catch (err) {
 		console.error('Error fetching guild movies from MongoDB:', err)
 		error = 'Failed to fetch guild movies: ' + err.message
