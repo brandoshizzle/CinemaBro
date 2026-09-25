@@ -9,15 +9,20 @@ module.exports = {
 		.setDescription("Get stats about your movie list.")
 		.setDMPermission(false),
 	async execute (interaction) {
+		await interaction.deferReply()
 
 		const { movies, error } = await getGuildMovies(interaction.guild, 'rating')
 
 		if (error) {
-			return logError(interaction, error)
+			return logError(interaction, error, { edit: true })
 		}
 
-		const { statsMessage } = await guildStats(interaction, movies)
+		const { statsMessage, error: statsError } = await guildStats(interaction, movies)
 
-		return interaction.reply(statsMessage);
+		if (statsError) {
+			return logError(interaction, statsError, { edit: true })
+		}
+
+		return interaction.editReply(statsMessage);
 	},
 };

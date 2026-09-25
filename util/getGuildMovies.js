@@ -21,7 +21,7 @@ async function getGuildMovies (guild, sortBy) {
 		const ratings = await Ratings.find({
 			'_id.movie_id': { $in: movieIds },
 			'_id.user_id': { $in: memberIds }
-		})
+		}).lean()
 
 		// Attach ratings to their respective movies
 		data.movies = data.movies.map(movie => ({

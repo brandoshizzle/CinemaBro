@@ -23,6 +23,7 @@
 	"dependencies": {
 		"@supabase/supabase-js": "^2.24.0",
 		"csv-parse": "^6.2.1",
+		"csv-parser": "^3.2.1",
 		"discord.js": "^14.11.0",
 		"dotenv": "^17.4.2",
 		"embed-table": "^4.2.3",
