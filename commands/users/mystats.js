@@ -62,9 +62,9 @@ module.exports = {
 
 				const closestMatch = [...comparisons.values()].sort((a, b) =>
 					(a.difference / a.sharedMovies) - (b.difference / b.sharedMovies) || b.sharedMovies - a.sharedMovies
-				)[0];
-				movieTwin = closestMatch
-					? `**${closestMatch.name}** (${(100 - closestMatch.difference / closestMatch.sharedMovies).toFixed(1)}% across ${closestMatch.sharedMovies} shared ${closestMatch.sharedMovies === 1 ? 'movie' : 'movies'})`
+				).filter(c => c.sharedMovies > 5);
+				movieTwin = closestMatch.length > 0
+					? `**${closestMatch[0].name}** (${(100 - closestMatch[0].difference / closestMatch[0].sharedMovies).toFixed(1)}% across ${closestMatch[0].sharedMovies} shared ${closestMatch[0].sharedMovies === 1 ? 'movie' : 'movies'})`
 					: 'No shared movie ratings yet';
 
 				if (bestGuiltyPleasure && bestGuiltyPleasure.difference > 0) {
